@@ -7,3 +7,6 @@ class SessionState:
     user_id: str
     issued_at: datetime.datetime
     expired_at: datetime.datetime
+
+    def asdict(self):
+        return dataclasses.asdict(self)
