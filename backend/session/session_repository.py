@@ -1,8 +1,8 @@
 import textwrap
 from datetime import datetime
-from sqlite3 import Connection
+from sqlite3 import Connection, IntegrityError
 
-from .model import SessionState
+from .session_model import SessionState
 
 def convert_session_state(session_id, user_id, issued_at, expired_at):
     return SessionState(
@@ -32,14 +32,21 @@ class SessionRepository:
           
             return convert_session_state(res)
     
-    def create(self, session_state: SessionState) -> None:
+    def create(self, session_state: SessionState) -> bool:
         with self.conn.cursor() as cur:
-            cur.execute(
-                textwrap.dedent("""
-                    INSERT INTO Session (session_id, user_id, issued_at, expired_at) VALUES (:session_id, :user_id, :issued_at, :expired_at)               
-                """),
-                session_state.asdict()
-            )
+            try:
+                cur.execute(
+                    textwrap.dedent("""
+                        INSERT INTO Session (session_id, user_id, issued_at, expired_at) VALUES (:session_id, :user_id, :issued_at, :expired_at)               
+                    """),
+                    session_state.asdict()
+                )
+            except IntegrityError:
+                self.conn.rollback()
+                raise ValueError("セッションステートのsession_idが既に存在します")
+            
+            else:
+                self.conn.commit()
           
     def update(self, session_state: SessionState) -> None:
         with self.conn.cursor() as cur:
