@@ -22,7 +22,7 @@ class UserRepository:
         result = res.fetchone()
         if result is None:
             return None
-        
+
         return User(
             user_id=result[0],
             created_at=datetime.fromisoformat(result[1]),

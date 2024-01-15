@@ -2,13 +2,15 @@ from .review_repository import ReviewRepository
 from .model import Review
 
 
-class UserManager:
+class reviewManager:
     def __init__(self, repo: ReviewRepository) -> None:
-        pass
+        self.repo = repo
 
     def register(self) -> Review:
         pass
 
-    def delete(self, user_id: str) -> None:
+    def get(self, review_id: str) -> None:
         pass
 
+    def put(self, review_id: str) -> None:
+        pass

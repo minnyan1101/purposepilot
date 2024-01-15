@@ -18,7 +18,7 @@ def main():
 
     cur.execute('''
             CREATE TABLE Purpose (
-            purpose_id INT AUTO INCREMENT NOT NULL, --目標ID
+            purpose_id INT AUTO INCREMENT, --目標ID
             user_id TEXT NOT NULL, --ユーザーID
             title TEXT NOT NULL, --目標タイトル
             description TEXT NOT NULL, --目標内容
@@ -36,8 +36,7 @@ def main():
             action_id INT AUTO INCREMENT NOT NULL, --行動ID
             user_id TEXT NOT NULL, --ユーザーID
             purpose_id INT NOT NULL, --目標ID
-            action_detail TEXT NOT NULL, --行動内容
-            run_duration_sec INT NOT NULL, --実行時間
+            action_detail TEXT NOT NULL, --行動内容8
             started_at DATETIME NOT NULL, --開始日時
             finished_at DATETIME, --終了日時
             PRIMARY KEY (action_id,user_id)

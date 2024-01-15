@@ -14,17 +14,17 @@ class User(BaseModel):
     avater_image_url: str
 
     @validator('user_id')
-    def check_length(cls, v, values):
+    def check_length(cls, v):
         if not (len(v) < 17 and len(v) > 0):
             raise ValueError('値が不正です。1~16文字の英数字または_(アンダーバー)のみ使用してください。')
         return v
 
     @validator('user_id')
-    def check_str(cls, v, values):
+    def check_str(cls, v):
         if not (n.search(v) and e.search(v) and '_' in v):
             raise ValueError('値が不正です。1~16文字の英数字または_(アンダーバー)のみ使用してください。')
         return v
-    
+
     def change_avater_image_url(self, new_url):
         self.avater_image_url = new_url
 

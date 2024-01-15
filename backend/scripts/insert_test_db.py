@@ -29,6 +29,34 @@ def main():
         )
 
     conn.commit()
+    
+    data = [
+        (
+            "test_1",
+            "てすと１",
+            "てすとでーた１の説明",
+            "2024-01-14T16:46:25.498268",
+            "2024-01-14T16:46:25.498268",
+            True,
+            None,
+        ),
+        (
+            "test_1",
+            "てすと2",
+            "てすとでーた2の説明",
+            "2024-01-14T16:46:25.498268",
+            "2024-01-14T16:46:25.498268",
+            True,
+            None,
+        ),
+    ]
+    cur.executemany(
+        """
+        INSERT into Purpose (user_id, title, description, created_at, due_at, is_completed, completed_at)
+            values (?, ?, ?, ?, ?, ?, ?)
+        """,
+        data
+        )
 
 
 if __name__ == '__main__':

@@ -22,7 +22,7 @@ class Purpose(BaseModel):
         if len(v) > 500:
             raise ValueError("目標内容は500字以内で入力してください")
         return v
-    
+
     def change_title(self, new_title):
         self.title = new_title
 
