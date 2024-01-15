@@ -2,7 +2,7 @@ from pydantic import BaseModel, validator
 
 
 class Purpose(BaseModel):
-    purpose_id: str
+    purpose_id: int
     user_id: str
     title: str
     description: str

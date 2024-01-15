@@ -18,7 +18,7 @@ def main():
 
     cur.execute('''
             CREATE TABLE Purpose (
-            purpose_id INT AUTO INCREMENT, --目標ID
+            purpose_id INTEGER PRIMARY KEY AUTOINCREMENT, --目標ID
             user_id TEXT NOT NULL, --ユーザーID
             title TEXT NOT NULL, --目標タイトル
             description TEXT NOT NULL, --目標内容
@@ -26,20 +26,18 @@ def main():
             due_at DATETIME, --期限
             is_completed BOOL NOT NULL, --完了フラグ
             completed_at DATETIME, --完了日時
-            PRIMARY KEY (purpose_id,user_id)
             FOREIGN KEY (user_id) references User(user_id)
             )''')
     conn.commit()
 
     cur.execute('''
             CREATE TABLE Action (
-            action_id INT AUTO INCREMENT NOT NULL, --行動ID
+            action_id INTEGER PRIMARY KEY AUTOINCREMENT, --行動ID
             user_id TEXT NOT NULL, --ユーザーID
             purpose_id INT NOT NULL, --目標ID
             action_detail TEXT NOT NULL, --行動内容8
             started_at DATETIME NOT NULL, --開始日時
             finished_at DATETIME, --終了日時
-            PRIMARY KEY (action_id,user_id)
             FOREIGN KEY (user_id) references Users(user_id),
             FOREIGN KEY (purpose_id) references Purpose(purpose_id)
             )''')
@@ -47,7 +45,7 @@ def main():
 
     cur.execute('''
             CREATE TABLE Review (
-            review_id INT AUTO INCREMENt, --振り返りID
+            review_id INTEGER PRIMARY KEY AUTOINCREMENT, --振り返りID
             user_id TEXT, --ユーザーID
             purpose_id INT, --目標ID
             question_id INT, --質問ID
@@ -55,7 +53,6 @@ def main():
             first_question_rating DOUBLE NOT NULL, --1問目の評価値
             second_question_rating DOUBLE NOT NULL, --2問目の評価値
             third_question_rating DOUBLE NOT NULL, --3問目の評価値
-            PRIMARY KEY (review_id)
             FOREIGN KEY (user_id) references Users(user_id),
             FOREIGN KEY (purpose_id) references Purpose(purpose_id)
             )''')

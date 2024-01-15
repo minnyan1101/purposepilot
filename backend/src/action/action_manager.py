@@ -15,16 +15,18 @@ class ActionManager:
         return self.repo.save(action)
 
     # 登録されているデータを更新する
-    def change_action(self, action: Action):
-        update = self.repo.find(action.action_id, action.user_id)
+    def change_action(self, action_id: int, user_id: str, action: Action):
+        update = self.repo.find(action_id, user_id)
+        if update is None:
+            return
         update.update(action)
-        self.repo.save(update)
+        return self.repo.save(update)
 
     def get_action(self, action_id: str, user_id: str) -> Action | None:
         res = self.repo.find(action_id, user_id)
         return res
 
-    def get_actions_list(self, user_id: str, purpose_ids: list[str] | None, to: datetime, _from: datetime) -> list[Action]:
+    def get_actions_list(self, user_id: str, purpose_ids: list[str] | None, to: datetime | None, _from: datetime | None) -> list[Action]:
         if not purpose_ids:
             purpose_ids = self.repo.user_purpose_ids(user_id)
 
@@ -33,7 +35,7 @@ class ActionManager:
 
         if not _from:
             _from = datetime.max
-            
+        print(user_id, purpose_ids,to,_from)
         return self.repo.findAll(user_id, purpose_ids, to, _from)
     
     def delete(self, action_id, user_id):

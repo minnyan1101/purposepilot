@@ -11,7 +11,7 @@ class ActionRepository:
         cur = self.conn.cursor()
         res = cur.execute(
             """
-            SELECT action_id, user_id, purpose_id, action_detail, started_at, finished_at
+            SELECT action_id, user_id, purpose_id, action_detail, started_at, finished_at FROM Action
                 WHERE action_id = ? AND user_id = ?
             """,
             (action_id, user_id)
@@ -33,17 +33,17 @@ class ActionRepository:
             )
 
     def findAll(self, user_id, purpose_ids: tuple[str], to: datetime, _from: datetime) -> list[Action]:
-        if purpose_ids:
+        if not purpose_ids:
             return []
 
         cur = self.conn.cursor()
         res = cur.execute(
-            """
+            f"""
             SELECT action_id, user_id, purpose_id, action_detail, started_at, finished_at FROM Action
-                WHERE purpose_id IN ? AND user_id = ? AND started_at BETWEEN ? AND ?;
+                WHERE purpose_id IN ( {','.join(['?'] * len(purpose_ids))} ) AND user_id = ? AND started_at BETWEEN ? AND ?;
             """,
             (
-                tuple(purpose_ids),
+                *purpose_ids,
                 user_id,
                 to.isoformat(),
                 _from.isoformat()
@@ -79,7 +79,7 @@ class ActionRepository:
             )
         results = []
         for result in res.fetchall():
-            results.append(result)
+            results.append(result[0])
 
         return results
 
@@ -137,7 +137,7 @@ class ActionRepository:
             )
             last_row = cur.execute(
                 """
-                SELECT action_id, user_id, purpose_id, action_detail, started_at, finished_at
+                SELECT action_id, user_id, purpose_id, action_detail, started_at, finished_at FROM Action
                     WHERE ROWID = ?
                 """,
                 (cur.lastrowid,)

@@ -13,7 +13,9 @@ app = FastAPI()
 
 
 def connect_sqlite(path):
-    return sqlite3.connect(path, check_same_thread=False)
+    conn = sqlite3.connect(path, check_same_thread=False)
+    conn.set_trace_callback(print)
+    return conn
 
 
 def make_auth_manager(db_conn):
@@ -150,8 +152,8 @@ def delete_purpose(id: int, session: Union[SessionState, None] = Depends(check_c
 # 行動
 # 行動の一覧の取得
 @app.get("/api/actions", status_code=200)
-def fetch_actions_list(purpose_ids: List[str] | None, From: datetime.datetime | None, to: datetime.datetime | None, session: Union[SessionState, None] = Depends(check_current_active_user)):
-    actions = action_manager.get_actions_list(session.user_id, purpose_ids, to, From)
+def fetch_actions_list(session: Union[SessionState, None] = Depends(check_current_active_user)):
+    actions = action_manager.get_actions_list(session.user_id, None, None, None)
     return actions
 
 
@@ -186,11 +188,11 @@ def fetch_actions(id: int, session: Union[SessionState, None] = Depends(check_cu
 # 行動記録の修正
 @app.put("/api/actions/{id}", status_code=200)
 def modify_actions(id: int, action: Action, session: Union[SessionState, None] = Depends(check_current_active_user)):
-    action = action_manager.change_action(action)
+    action = action_manager.change_action(id, session.user_id, action)
     return action
 
 
 # 行動記録の削除
-@app.put("/api/actions/{id}", status_code=200)
+@app.delete("/api/actions/{id}", status_code=200)
 def delete_actions(id: int, session: Union[SessionState, None] = Depends(check_current_active_user)):
     action_manager.delete(id, session.user_id)

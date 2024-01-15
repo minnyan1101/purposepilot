@@ -3,9 +3,9 @@ from pydantic import BaseModel, validator
 
 
 class Action(BaseModel):
-    action_id: str | None
-    user_id: str
-    purpose_id: str
+    action_id: int | None = None
+    user_id: str | None = None
+    purpose_id: int
     action_detail: str
     started_at: datetime
     finished_at: datetime

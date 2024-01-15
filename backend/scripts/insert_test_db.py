@@ -57,6 +57,42 @@ def main():
         """,
         data
         )
+    
+    conn.commit()
+    
+    data = {
+        (
+            "test_1",
+            1,
+            "てすとでーた１",
+            "2024-01-14T16:46:25.498268",
+            "2024-01-14T16:46:25.498268",
+        ),
+        (
+            "test_1",
+            1,
+            "てすとでーた2",
+            "2024-01-14T16:46:25.498268",
+            "2024-01-14T16:46:25.498268",
+        ),
+        (
+            "test_1",
+            1,
+            "てすとでーた3",
+            "2024-01-14T16:46:25.498268",
+            "2024-01-14T16:46:25.498268",
+        )
+    }
+
+    cur.executemany(
+        """
+        INSERT into Action (user_id, purpose_id, action_detail, started_at, finished_at)
+            values (?,?,?,?,?)
+        """,
+        data
+        )
+    
+    conn.commit()
 
 
 if __name__ == '__main__':
