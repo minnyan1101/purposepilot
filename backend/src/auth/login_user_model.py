@@ -16,5 +16,5 @@ class LoginUser(BaseModel):
     @validator("password")
     def _(cls, v, values):
         validate_password(v)
-        
+
         return v

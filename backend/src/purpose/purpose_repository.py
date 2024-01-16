@@ -33,7 +33,7 @@ class PurposeRepository:
             completed_at=datetime.flomisoformat(result[7])
             )
 
-    def findAll(self, user_id, show_completed: bool, show_uncompleted: bool) -> list[Purpose]:
+    def findAll(self, user_id, show_completed: bool, show_uncompleted: bool) -> 'list[Purpose]':
         cur = self.conn.cursor()
         res = cur.execute(
             """

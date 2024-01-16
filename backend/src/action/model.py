@@ -3,8 +3,8 @@ from pydantic import BaseModel, validator
 
 
 class Action(BaseModel):
-    action_id: int | None = None
-    user_id: str | None = None
+    action_id: int or None = None
+    user_id: str or None = None
     purpose_id: int
     action_detail: str
     started_at: datetime
@@ -18,10 +18,10 @@ class Action(BaseModel):
 
     def running_time(self) -> timedelta:
         return self.finished_at - self.started_at
-    
+
     def update(self, new):
         self.action_detail = new.action_detail
-    
+
     def asdict(self):
         return {
             "action_id": self.action_id,

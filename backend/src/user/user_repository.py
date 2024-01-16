@@ -31,4 +31,15 @@ class UserRepository:
         )
 
     def delete(self, user_id: str) -> None:
-        pass
+        def delete(self, purpose_id, user_id) -> None:
+            cur = self.conn.cursor()
+            cur.execute(
+                """
+                DELETE FROM User
+                    WHERE user_id = ?
+                """,
+                (
+                    user_id,
+                )
+            )
+        self.conn.commit()

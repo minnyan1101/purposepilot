@@ -17,9 +17,8 @@ class SessionState:
             "issued_at": self.issued_at.isoformat(),
             "expired_at": self.issued_at.isoformat(),
         }
-    
+
     def is_alive(self, now_datetime: datetime) -> bool:
         if self.expired_at < now_datetime:
             return True
-        
         return False

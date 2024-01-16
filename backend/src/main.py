@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Union
 
 from fastapi import Response, FastAPI, Cookie, HTTPException, Depends, status
 
@@ -112,41 +112,61 @@ def fetch_user_profile(session: Union[SessionState, None] = Depends(check_curren
 
 @app.put("/api/users/me")
 def modify_user_profile(session: Union[SessionState, None] = Depends(check_current_active_user)):
-    pass
+    user = user_manager.change_profile(id, session.user_id, User)
+    return user
 
 
 @app.delete("/api/users/me")
 def delete_user_account(session: Union[SessionState, None] = Depends(check_current_active_user)):
-    pass
+    user_manager.delete(id, session.user_id)
 
 
 # 目標
 @app.get("/api/purposes")
-def fetch_purpose_list(status: Union[str, None], session: Union[SessionState, None] = Depends(check_current_active_user)):
+def fetch_purpose_list(status: Union[str, None],
+                       session: Union[SessionState, None] = Depends(check_current_active_user)):
     if status not in PurposeFilter:
         status = PurposeFilter.ALL
     purposes = purpose_manager.get_purpose_list(session.user_id, status)
     return purposes
 
 
+# 目標の作成
 @app.post("/api/purposes")
-def create_purpose(session: Union[SessionState, None] = Depends(check_current_active_user)):
-    pass
+def create_purpose(purpose: Purpose, session: Union[SessionState, None] = Depends(check_current_active_user)):
+    purpose.purpose_id = None
+    purpose.user_id = session.user_id
+
+    try:
+        purpose = purpose_manager.new_purpose(purpose)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(e),
+        )
+    return purpose
 
 
 @app.get("/api/purposes/{id}")
 def fetch_purpose(id: int, session: Union[SessionState, None] = Depends(check_current_active_user)):
-    pass
+    purpose = purpose_manager.get_purpose(id, session.purpose_id, session.user_id)
+    if purpose is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="この目標IDは存在しません"
+        )
+    return purpose
 
 
 @app.put("/api/purposes/{id}")
-def modify_purpose(id: int, session: Union[SessionState, None] = Depends(check_current_active_user)):
-    pass
+def modify_purpose(id: int, purpose: Purpose, session: Union[SessionState, None] = Depends(check_current_active_user)):
+    purpose = purpose_manager.change_purpose(id, purpose)
+    return purpose
 
 
 @app.put("/api/purposes/{id}")
 def delete_purpose(id: int, session: Union[SessionState, None] = Depends(check_current_active_user)):
-    pass
+    purpose_manager.delete(id, session.user_id)
 
 
 # 行動

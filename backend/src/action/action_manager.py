@@ -26,7 +26,8 @@ class ActionManager:
         res = self.repo.find(action_id, user_id)
         return res
 
-    def get_actions_list(self, user_id: str, purpose_ids: list[str] | None, to: datetime | None, _from: datetime | None) -> list[Action]:
+    def get_actions_list(self, user_id: str, purpose_ids: 'list[str]' or None,
+                         to: datetime or None, _from: datetime or None) -> 'list[Action]':
         if not purpose_ids:
             purpose_ids = self.repo.user_purpose_ids(user_id)
 
@@ -35,8 +36,8 @@ class ActionManager:
 
         if not _from:
             _from = datetime.max
-        print(user_id, purpose_ids,to,_from)
+        print(user_id, purpose_ids, to, _from)
         return self.repo.findAll(user_id, purpose_ids, to, _from)
-    
+
     def delete(self, action_id, user_id):
         self.repo.delete(action_id, user_id)

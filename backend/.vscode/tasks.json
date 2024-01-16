@@ -7,7 +7,7 @@
             "label": "launch api server",
             "type": "shell",
             "command": "${command:python.interpreterPath}",
-            "args": ["-m", "uvicorn","backend.main:app", "--reload"],
+            "args": ["-m", "uvicorn","src.main:app", "--reload"],
             "runOptions": {"instanceLimit": 1}
         }
     ]
