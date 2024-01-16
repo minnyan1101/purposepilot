@@ -3,15 +3,15 @@ from pydantic import BaseModel, validator
 
 
 class Action(BaseModel):
-    action_id: int or None = None
-    user_id: str or None = None
+    action_id: int | None = None
+    user_id: str
     purpose_id: int
     action_detail: str
     started_at: datetime
     finished_at: datetime
 
     @validator('action_detail')
-    def check_length(cls, v, values):
+    def check_length(cls, v):
         if not (len(v) < 500 and len(v) > 1):
             raise ValueError("行動内容は1文字以上500字以内で入力してください")
         return v

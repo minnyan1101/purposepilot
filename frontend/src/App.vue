@@ -1,20 +1,20 @@
 <script setup>
-import BaseLayout from './components/BaseLayout.vue';
-import AppHeader from './components/AppHeader.vue';
-import SideMenu from './components/SideMenu.vue';
+import BaseLayout from '@/components/BaseLayout.vue';
+import AppHeader from '@/components/AppHeader.vue';
+import SideMenu from '@/components/SideMenu.vue';
 </script>
 
 <template>
   <BaseLayout>
-    <template v-slot:header>
+    <template #header>
       <AppHeader />
     </template>
     
-    <template v-slot:side>
-      <SideMenu/>
+    <template #side>
+      <SideMenu />
     </template>
     
-    <template v-slot:main>
+    <template #main>
       <RouterView />
     </template>
   </BaseLayout>

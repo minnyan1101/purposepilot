@@ -55,7 +55,8 @@ def check_current_active_user(ssid: Union[str, None] = Cookie(default=None)):
         raise HTTPException(
             status_code=401,
         )
-    return auth_manager.find(ssid)
+    result = auth_manager.find(ssid)
+    return result
 
 
 # 認証
@@ -138,7 +139,14 @@ def create_purpose(purpose: Purpose, session: Union[SessionState, None] = Depend
     purpose.user_id = session.user_id
 
     try:
-        purpose = purpose_manager.new_purpose(purpose)
+        purpose = purpose_manager.new_purpose(
+            current_user=session.user_id,
+            title=purpose.title,
+            description=purpose.description,
+            due_at=purpose.due_at,
+            status=purpose.status,
+            completed_at=purpose.completed_at
+            )
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -149,7 +157,7 @@ def create_purpose(purpose: Purpose, session: Union[SessionState, None] = Depend
 
 @app.get("/api/purposes/{id}")
 def fetch_purpose(id: int, session: Union[SessionState, None] = Depends(check_current_active_user)):
-    purpose = purpose_manager.get_purpose(id, session.purpose_id, session.user_id)
+    purpose = purpose_manager.get_purpose(id, session.user_id)
     if purpose is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -160,13 +168,18 @@ def fetch_purpose(id: int, session: Union[SessionState, None] = Depends(check_cu
 
 @app.put("/api/purposes/{id}")
 def modify_purpose(id: int, purpose: Purpose, session: Union[SessionState, None] = Depends(check_current_active_user)):
-    purpose = purpose_manager.change_purpose(id, purpose)
+    if id != purpose.purpose_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="パスで指定されたIDとリクエストボディのIDが異なっています"
+        )
+    purpose = purpose_manager.change_purpose(purpose, session.user_id)
     return purpose
 
 
 @app.put("/api/purposes/{id}")
 def delete_purpose(id: int, session: Union[SessionState, None] = Depends(check_current_active_user)):
-    purpose_manager.delete(id, session.user_id)
+    purpose_manager.delete_purpose(id, session.user_id)
 
 
 # 行動

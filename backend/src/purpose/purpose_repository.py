@@ -1,13 +1,14 @@
 import sqlite3
-from .model import Purpose
 from datetime import datetime
+
+from .model import Purpose
 
 
 class PurposeRepository:
     def __init__(self, db_conn: sqlite3.Connection) -> None:
-        self.db_conn = db_conn
+        self.conn = db_conn
 
-    def find(self, purpose_id, user_id) -> Purpose:
+    def find(self, purpose_id, user_id) -> Purpose | None:
         cur = self.conn.cursor()
         res = cur.execute(
             """
@@ -22,18 +23,9 @@ class PurposeRepository:
             return None
         cur.close()
 
-        return Purpose(
-            purpose_id=result[0],
-            user_id=result[1],
-            title=result[2],
-            description=result[3],
-            created_at=datetime.fromisoformat(result[4]),
-            due_at=datetime.fromisoformat(result[5]),
-            is_completed=result[6],
-            completed_at=datetime.flomisoformat(result[7])
-            )
+        return convert_result_to_purpose(result)
 
-    def findAll(self, user_id, show_completed: bool, show_uncompleted: bool) -> 'list[Purpose]':
+    def findAll(self, user_id, show_completed: bool, show_uncompleted: bool) -> list[Purpose]:
         cur = self.conn.cursor()
         res = cur.execute(
             """
@@ -46,16 +38,7 @@ class PurposeRepository:
         if result is None:
             return None
         cur.close()
-        return Purpose(
-            purpose_id=result[0],
-            user_id=result[1],
-            title=result[2],
-            description=result[3],
-            created_at=datetime.fromisoformat(result[4]),
-            due_at=datetime.fromisoformat(result[5]),
-            is_completed=result[6],
-            completed_at=datetime.flomisoformat(result[7])
-            )
+        return convert_result_to_purpose(result)
 
     def delete(self, purpose_id, user_id) -> None:
         cur = self.conn.cursor()
@@ -125,16 +108,27 @@ class PurposeRepository:
                 (cur.lastrowid,)
             )
             result = last_row.fetchone()
-            res = Purpose(
-                purpose_id=result[0],
-                user_id=result[1],
-                title=result[2],
-                description=result[3],
-                created_at=datetime.fromisoformat(result[4]),
-                due_at=datetime.fromisoformat(result[5]),
-                is_completed=result[6],
-                completed_at=datetime.flomisoformat(result[7])
-            )
+            res = convert_result_to_purpose(result)
 
         self.conn.commit()
         return res
+
+
+def convert_result_to_purpose(result):
+    return Purpose(
+        purpose_id=result[0],
+        user_id=result[1],
+        title=result[2],
+        description=result[3],
+        created_at=datetime.fromisoformat(result[4]),
+        due_at=datetime.fromisoformat(result[5]),
+        status=convert_status(result[6]),
+        completed_at=datetime.flomisoformat(result[7])
+    )
+
+
+def convert_status(is_active):
+    if is_active:
+        return 'completed'
+    else:
+        return 'uncompleted'

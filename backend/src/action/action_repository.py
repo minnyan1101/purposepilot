@@ -66,7 +66,7 @@ class ActionRepository:
         cur.close()
         return results
 
-    def user_purpose_ids(self, user_id: str) -> 'list[str]:
+    def user_purpose_ids(self, user_id: str) -> list[str]:
         cur = self.conn.cursor()
         res = cur.execute(
             """
