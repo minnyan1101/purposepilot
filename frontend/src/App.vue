@@ -1,7 +1,6 @@
 <script setup>
 import BaseLayout from '@/components/BaseLayout.vue';
 import AppHeader from '@/components/AppHeader.vue';
-import SideMenu from '@/components/SideMenu.vue';
 </script>
 
 <template>
@@ -9,11 +8,9 @@ import SideMenu from '@/components/SideMenu.vue';
     <template #header>
       <AppHeader />
     </template>
-    
     <template #side>
-      <SideMenu />
+      <RouterView name="side" />
     </template>
-    
     <template #main>
       <RouterView />
     </template>
