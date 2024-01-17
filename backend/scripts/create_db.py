@@ -1,7 +1,8 @@
 import sqlite3
+from venv import create
 
 
-def main():
+def create_table():
     conn = sqlite3.connect('purpose_pilot.db')
     cur = conn.cursor()
 
@@ -71,4 +72,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    create_table()

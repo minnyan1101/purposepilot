@@ -32,7 +32,7 @@ class ActionRepository:
             finished_at=datetime.fromisoformat(result[5]),
             )
 
-    def findAll(self, user_id, purpose_ids: 'tuple[str]', to: datetime, _from: datetime) -> 'list[Action]':
+    def findAll(self, user_id, purpose_ids: list[int], to: datetime, _from: datetime) -> list[Action]:
         if not purpose_ids:
             return []
 
@@ -40,7 +40,10 @@ class ActionRepository:
         res = cur.execute(
             f"""
             SELECT action_id, user_id, purpose_id, action_detail, started_at, finished_at FROM Action
-            WHERE purpose_id IN ( {','.join(['?'] * len(purpose_ids))} ) AND user_id = ? AND started_at BETWEEN ? AND ?;
+                WHERE 
+                    purpose_id IN ( {','.join(['?'] * len(purpose_ids))} ) 
+                    AND user_id = ? 
+                    AND started_at BETWEEN ? AND ?;
             """,
             (
                 *purpose_ids,
@@ -66,7 +69,7 @@ class ActionRepository:
         cur.close()
         return results
 
-    def user_purpose_ids(self, user_id: str) -> list[str]:
+    def user_purpose_ids(self, user_id: str) -> list[int]:
         cur = self.conn.cursor()
         res = cur.execute(
             """

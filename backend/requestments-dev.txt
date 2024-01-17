@@ -1,2 +1,4 @@
 -r ./requestments.txt
-pylint
+flake8
+pytest
+httpx

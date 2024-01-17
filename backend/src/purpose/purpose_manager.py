@@ -21,7 +21,7 @@ class PurposeManager:
             user_id=current_user,
             title=title,
             description=description,
-            created_at=datetime.utcnow(timezone.utc),
+            created_at=datetime.now(timezone.utc),
             due_at=due_at,
             status=status,
             completed_at=completed_at
@@ -38,11 +38,11 @@ class PurposeManager:
         result = self.repo.save(update)
         return result
 
-    def delete_purpose(self, purpose_id, current_user) -> Purpose:
+    def delete_purpose(self, purpose_id, current_user):
         self.repo.delete(purpose_id, current_user)
 
     # 目標を取得
-    def get_purpose(self, purpose_id, current_user) -> Purpose:
+    def get_purpose(self, purpose_id, current_user) -> Purpose | None:
         res = self.repo.find(purpose_id, current_user)
         return res
 

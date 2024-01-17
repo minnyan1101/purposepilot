@@ -1,9 +1,10 @@
 from datetime import datetime
+from venv import create
 from pydantic import BaseModel, validator
 
 class Purpose(BaseModel):
     purpose_id: int | None = None
-    user_id: str
+    user_id: str | None = None
     title: str
     description: str
     created_at: datetime | None = None
@@ -42,8 +43,35 @@ class Purpose(BaseModel):
         self.description = new.description
         self.due_at = new.due_at
         self.status = new.status
-        self.completed_at = new.completed
+        self.completed_at = new.completed_at
 
-    def is_active(self):
+    def is_completed(self):
         return self.status == 'completed'
+    
+    def asdict(self):
+        if self.created_at is None:
+            created_at = None
+        else:
+            created_at = self.created_at.isoformat()
+            
+        if self.due_at is None:
+            due_at = None
+        else:
+            due_at = self.due_at.isoformat()
+            
+        if self.completed_at is None:
+            completed_at = None
+        else:
+            completed_at = self.completed_at.isoformat()
+        
+        return {        
+            "purpose_id": self.purpose_id,
+            "user_id": self.user_id,
+            "title": self.title,
+            "description": self.description,
+            "created_at": created_at,
+            "due_at": due_at,
+            "is_completed": self.is_completed(),
+            "completed_at": completed_at,
+        }
 

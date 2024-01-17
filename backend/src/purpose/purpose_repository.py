@@ -12,8 +12,8 @@ class PurposeRepository:
         cur = self.conn.cursor()
         res = cur.execute(
             """
-            SELECT purpose_id, user_id, title, description, created_at, due_at, is_completed, completed_at
-                WHERE is_completed = ? AND user_id = ?
+            SELECT purpose_id, user_id, title, description, created_at, due_at, is_completed, completed_at FROM Purpose
+                WHERE purpose_id = ? AND user_id = ?
             """,
             (purpose_id, user_id)
             )
@@ -29,16 +29,14 @@ class PurposeRepository:
         cur = self.conn.cursor()
         res = cur.execute(
             """
-            SELECT purpose_id, user_id, title, description, created_at, due_at, is_completed, completed_at
-                WHERE purpose_id = ? AND user_id = ? AND (is_completed == ? AND is_completed != ?)
+            SELECT purpose_id, user_id, title, description, created_at, due_at, is_completed, completed_at FROM Purpose
+                WHERE user_id = ? AND (is_completed == ? OR is_completed != ?)
             """,
             (user_id, show_completed, show_uncompleted)
             )
-        result = res.fetchone()
-        if result is None:
-            return None
+        results = [convert_result_to_purpose(row) for row in res.fetchall()]
         cur.close()
-        return convert_result_to_purpose(result)
+        return results
 
     def delete(self, purpose_id, user_id) -> None:
         cur = self.conn.cursor()
@@ -102,7 +100,7 @@ class PurposeRepository:
             )
             last_row = cur.execute(
                 """
-                SELECT purpose_id, user_id, title, description, created_at, due_at, is_completed, completed_at
+                SELECT purpose_id, user_id, title, description, created_at, due_at, is_completed, completed_at FROM Purpose
                     WHERE ROWID = ?
                 """,
                 (cur.lastrowid,)
@@ -115,6 +113,11 @@ class PurposeRepository:
 
 
 def convert_result_to_purpose(result):
+    if result[7] is None:
+        completed_at = None
+    else:
+        completed_at = datetime.fromisoformat(result[7])
+    
     return Purpose(
         purpose_id=result[0],
         user_id=result[1],
@@ -123,7 +126,7 @@ def convert_result_to_purpose(result):
         created_at=datetime.fromisoformat(result[4]),
         due_at=datetime.fromisoformat(result[5]),
         status=convert_status(result[6]),
-        completed_at=datetime.flomisoformat(result[7])
+        completed_at=completed_at
     )
 
 

@@ -82,7 +82,10 @@ def login(login_info: LoginUser, res: Response):
 
 
 @app.post("/api/auth/logout")
-def logout(res: Response, session: Union[SessionState, None] = Depends(check_current_active_user)):
+def logout(res: Response, session: SessionState = Depends(check_current_active_user)):
+    if session is None:
+        return {}
+
     auth_manager.logout(session.session_id)
     res.set_cookie(
         key="ssid",
@@ -96,7 +99,7 @@ def logout(res: Response, session: Union[SessionState, None] = Depends(check_cur
 
 
 # ユーザー
-@app.post("/api/users")
+@app.post("/api/users", status_code=status.HTTP_201_CREATED)
 def register_user_account(register_user: RegisterUser):
     if not auth_manager.register(register_user):
         raise HTTPException(
@@ -107,34 +110,41 @@ def register_user_account(register_user: RegisterUser):
 
 
 @app.get("/api/users/me")
-def fetch_user_profile(session: Union[SessionState, None] = Depends(check_current_active_user)):
+def fetch_user_profile(session: SessionState = Depends(check_current_active_user)):
     return user_manager.get_profile(session.user_id)
 
 
 @app.put("/api/users/me")
-def modify_user_profile(session: Union[SessionState, None] = Depends(check_current_active_user)):
-    user = user_manager.change_profile(id, session.user_id, User)
+def modify_user_profile(user: User, session: SessionState = Depends(check_current_active_user)):
+    user = user_manager.change_profile(user, session.user_id)
     return user
 
 
 @app.delete("/api/users/me")
-def delete_user_account(session: Union[SessionState, None] = Depends(check_current_active_user)):
-    user_manager.delete(id, session.user_id)
+def delete_user_account(session: SessionState = Depends(check_current_active_user)):
+    user_manager.delete(session.user_id)
 
 
 # 目標
 @app.get("/api/purposes")
-def fetch_purpose_list(status: Union[str, None],
-                       session: Union[SessionState, None] = Depends(check_current_active_user)):
-    if status not in PurposeFilter:
+def fetch_purpose_list(status: Union[str, None] = "all",
+                       session: SessionState = Depends(check_current_active_user)):
+    if status == PurposeFilter.COMPLETED:
+        status = PurposeFilter.COMPLETED
+
+    elif status == PurposeFilter.UNCOMPLETED:
+        status = PurposeFilter.UNCOMPLETED
+
+    else:
         status = PurposeFilter.ALL
+
     purposes = purpose_manager.get_purpose_list(session.user_id, status)
     return purposes
 
 
 # 目標の作成
-@app.post("/api/purposes")
-def create_purpose(purpose: Purpose, session: Union[SessionState, None] = Depends(check_current_active_user)):
+@app.post("/api/purposes", status_code=status.HTTP_201_CREATED)
+def create_purpose(purpose: Purpose, session: SessionState = Depends(check_current_active_user)):
     purpose.purpose_id = None
     purpose.user_id = session.user_id
 
@@ -156,7 +166,7 @@ def create_purpose(purpose: Purpose, session: Union[SessionState, None] = Depend
 
 
 @app.get("/api/purposes/{id}")
-def fetch_purpose(id: int, session: Union[SessionState, None] = Depends(check_current_active_user)):
+def fetch_purpose(id: int, session: SessionState = Depends(check_current_active_user)):
     purpose = purpose_manager.get_purpose(id, session.user_id)
     if purpose is None:
         raise HTTPException(
@@ -167,7 +177,7 @@ def fetch_purpose(id: int, session: Union[SessionState, None] = Depends(check_cu
 
 
 @app.put("/api/purposes/{id}")
-def modify_purpose(id: int, purpose: Purpose, session: Union[SessionState, None] = Depends(check_current_active_user)):
+def modify_purpose(id: int, purpose: Purpose, session: SessionState = Depends(check_current_active_user)):
     if id != purpose.purpose_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -178,21 +188,21 @@ def modify_purpose(id: int, purpose: Purpose, session: Union[SessionState, None]
 
 
 @app.put("/api/purposes/{id}")
-def delete_purpose(id: int, session: Union[SessionState, None] = Depends(check_current_active_user)):
+def delete_purpose(id: int, session: SessionState = Depends(check_current_active_user)):
     purpose_manager.delete_purpose(id, session.user_id)
 
 
 # 行動
 # 行動の一覧の取得
 @app.get("/api/actions", status_code=200)
-def fetch_actions_list(session: Union[SessionState, None] = Depends(check_current_active_user)):
+def fetch_actions_list(session: SessionState = Depends(check_current_active_user)):
     actions = action_manager.get_actions_list(session.user_id, None, None, None)
     return actions
 
 
 # 行動記録の作成
 @app.post("/api/actions", status_code=status.HTTP_201_CREATED)
-def create_actions(action: Action, session: Union[SessionState, None] = Depends(check_current_active_user)):
+def create_actions(action: Action, session: SessionState = Depends(check_current_active_user)):
     action.action_id = None
     action.user_id = session.user_id
 
@@ -208,7 +218,7 @@ def create_actions(action: Action, session: Union[SessionState, None] = Depends(
 
 # 行動記録の取得
 @app.get("/api/actions/{id}", status_code=200)
-def fetch_actions(id: int, session: Union[SessionState, None] = Depends(check_current_active_user)):
+def fetch_actions(id: int, session: SessionState = Depends(check_current_active_user)):
     action = action_manager.get_action(id, session.user_id)
     if action is None:
         raise HTTPException(
@@ -220,12 +230,12 @@ def fetch_actions(id: int, session: Union[SessionState, None] = Depends(check_cu
 
 # 行動記録の修正
 @app.put("/api/actions/{id}", status_code=200)
-def modify_actions(id: int, action: Action, session: Union[SessionState, None] = Depends(check_current_active_user)):
+def modify_actions(id: int, action: Action, session: SessionState = Depends(check_current_active_user)):
     action = action_manager.change_action(id, session.user_id, action)
     return action
 
 
 # 行動記録の削除
 @app.delete("/api/actions/{id}", status_code=200)
-def delete_actions(id: int, session: Union[SessionState, None] = Depends(check_current_active_user)):
+def delete_actions(id: int, session: SessionState = Depends(check_current_active_user)):
     action_manager.delete(id, session.user_id)
