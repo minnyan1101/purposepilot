@@ -1,9 +1,13 @@
 <script setup>
-import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { computed } from 'vue';
 const props = defineProps(['purpose'])
 
-function formatDate(date){
-  if (date === undefined) {
+const actionLink = computed(() => `/action/new?purpose_id=${props.purpose.purpose_id}`)
+const editLink = computed(() => `/purposes/${props.purpose.purpose_id}/edit`)
+
+function formatDate(date) {
+  if (date === undefined || date === null) {
     return 'なし'
   }
   const year = date.getFullYear().toString()
@@ -17,8 +21,9 @@ function formatDate(date){
 
 <template>
   <div class="bg-neutral-50 rounded-lg border-2 border-neutral-300 py-2 px-4 flex gap-4">
-    <FontAwesomeIcon icon="fa-solid fa-circle-play" class="text-pink-500 text-4xl hover:text-pink-700 self-center" />
-
+    <RouterLink :to="actionLink" class="self-center">
+      <FontAwesomeIcon icon="fa-solid fa-circle-play" class="text-pink-500 text-4xl hover:text-pink-700 " />
+    </RouterLink>
     <div class="flex-grow flex flex-col divide-y-2 divide-neutral-200 gap-1">
       <div class="text-xl">
         {{ props.purpose.title }}
@@ -31,8 +36,8 @@ function formatDate(date){
         {{ props.purpose.description }}
       </div>
     </div>
-    <div class="">
-      <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" class="text-neutral-800" fixed-width />
-    </div>
+    <RouterLink :to="editLink" class="self-start">
+      <FontAwesomeIcon icon="fa-solid fa-pen-to-square" class="text-neutral-800 hover:text-neutral-500" fixed-width />
+    </RouterLink>
   </div>
 </template>

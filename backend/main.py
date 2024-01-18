@@ -2,10 +2,10 @@ from typing import Union
 
 from fastapi import Response, FastAPI, Cookie, HTTPException, Depends, status
 
-from .auth import AuthManager, AuthRepository, SessionRepository, SessionState, LoginUser
-from .user import UserRepository, UserManager, User, RegisterUser
-from .purpose import Purpose, PurposeRepository, PurposeManager, PurposeFilter
-from .action import Action, ActionRepository, ActionManager
+from purpose_pilot.auth import AuthManager, AuthRepository, SessionRepository, SessionState, LoginUser
+from purpose_pilot.user import UserRepository, UserManager, User, RegisterUser
+from purpose_pilot.purpose import Purpose, PurposeRepository, PurposeManager, PurposeFilter
+from purpose_pilot.action import Action, ActionRepository, ActionManager
 import sqlite3
 import datetime
 

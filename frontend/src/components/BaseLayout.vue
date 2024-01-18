@@ -2,16 +2,16 @@
 </script>
 
 <template>
-  <div class="w-screen h-screen overflow-clip flex flex-col bg-neutral-100">
-    <header class="w-full">
+  <div class="w-screen h-screen grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] bg-neutral-100">
+    <header class="col-start-1 col-end-3 row-start-1 row-end-2 ">
       <slot name="header" />
     </header>
-    <div class="h-full flex flex-1">
+    <nav class="col-start-1 col-end-2 row-span-1">
       <slot name="side" />
-      <div class="grow size-full flex flex-col items-center">
-        <slot name="main" class=""/>
-      </div>
-    </div>
+    </nav>
+    <main class="col-start-2 col-end-3 row-span-1 overflow-y-scroll flex flex-col items-center">
+      <slot name="main" class="" />
+    </main>
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 import { onMounted, onUnmounted, ref } from "vue";
 
 export function usePullFetch(delay_ms, url, options) {
-  const data = ref(null)
+  const json = ref(null)
   const error = ref(null)
   const intervalId = ref(null)
 
@@ -9,16 +9,13 @@ export function usePullFetch(delay_ms, url, options) {
     fetch(url, options)
     .then(res => {
       return res.json()
-    }).then(json => {
-      console.log(json)
-      data.value = json
+    }).then(res_json => {
+      json.value = res_json
     }).catch(err => {
       error.value = err
     })
   }
 
-  pullFetch()
-/*
   onMounted(() => {
     pullFetch()
     intervalId.value = setInterval(pullFetch, delay_ms)
@@ -27,6 +24,6 @@ export function usePullFetch(delay_ms, url, options) {
   onUnmounted(() => {
     clearInterval(intervalId.value)
   })
-*/
-  return { data , error }
+
+  return { json , error }
 }

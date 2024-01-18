@@ -21,28 +21,28 @@ const routes = [
     }
   },
   {
-    path: '/action',
+    path: '/actions',
     components: {
       default: ActionPage,
       side: SideMenu
     }
   },
   {
-    path: '/purpose',
+    path: '/purposes',
     components: {
       default: PurposePage,
       side: SideMenu
     }
   },
   {
-    path: '/purpose/new',
+    path: '/purposes/new',
     components: {
       default: PurposeCreatePage,
       side: SideMenu
     }
   },
   {
-    path: '/purpose/:id/edit',
+    path: '/purposes/:id/edit',
     components: {
       default: PurposeEditPage,
       side: SideMenu

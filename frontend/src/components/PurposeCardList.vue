@@ -2,7 +2,6 @@
 import PurposeCard from './PurposeCard.vue';
 
 const props = defineProps(['purpose_list'])
-console.log(props.purpose_list)
 </script>
 
 <template>

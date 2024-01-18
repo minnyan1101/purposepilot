@@ -27,7 +27,7 @@ function login() {
     if (!res.ok) {
       throw new Error('入力したユーザーIDかパスワードが間違っています。')
     }
-    router.push("/purpose")
+    router.push("/purposes")
   }).catch(() => {
     user_id.value = ""
     password.value = ""

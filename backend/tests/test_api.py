@@ -1,5 +1,5 @@
 import json
-from purpose_pilot.main import app, login
+from main import app, login
 from scripts.init_test_db import main
 from fastapi.testclient import TestClient
 from httpx import Cookies

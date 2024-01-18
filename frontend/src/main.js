@@ -5,9 +5,9 @@ import { router } from '@/router'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faAngleLeft, faCirclePlay, faEllipsisVertical, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faAngleLeft, faCirclePlay, faEllipsisVertical, faPenToSquare, faPlus, faUser } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faPlus, faCirclePlay, faEllipsisVertical, faAngleLeft)
+library.add(faPlus, faCirclePlay, faEllipsisVertical, faAngleLeft, faPenToSquare, faUser)
 
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)

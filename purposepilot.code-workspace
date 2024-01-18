@@ -26,7 +26,8 @@
 		},
         "editor.detectIndentation": false,
         "python.analysis.typeCheckingMode": "basic",
-        "typescript.preferences.importModuleSpecifier": "non-relative"
+        "typescript.preferences.importModuleSpecifier": "non-relative",
+        "git.autofetch": true
 	},
 	"tasks": {
 		"version": "2.0.0",

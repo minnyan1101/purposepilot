@@ -117,6 +117,11 @@ def convert_result_to_purpose(result):
         completed_at = None
     else:
         completed_at = datetime.fromisoformat(result[7])
+
+    if result[5] is None:
+        due_at = None
+    else:
+        due_at = datetime.fromisoformat(result[5])
     
     return Purpose(
         purpose_id=result[0],
@@ -124,7 +129,7 @@ def convert_result_to_purpose(result):
         title=result[2],
         description=result[3],
         created_at=datetime.fromisoformat(result[4]),
-        due_at=datetime.fromisoformat(result[5]),
+        due_at=due_at,
         status=convert_status(result[6]),
         completed_at=completed_at
     )
