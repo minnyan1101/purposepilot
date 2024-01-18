@@ -40,9 +40,9 @@ class ActionRepository:
         res = cur.execute(
             f"""
             SELECT action_id, user_id, purpose_id, action_detail, started_at, finished_at FROM Action
-                WHERE 
-                    purpose_id IN ( {','.join(['?'] * len(purpose_ids))} ) 
-                    AND user_id = ? 
+                WHERE
+                    purpose_id IN ( {','.join(['?'] * len(purpose_ids))} )
+                    AND user_id = ?
                     AND started_at BETWEEN ? AND ?;
             """,
             (

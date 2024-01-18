@@ -15,4 +15,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-gui
+dev = [
+    "pytest",
+    "flake8",
+    "httpx"
+]

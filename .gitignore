@@ -2,3 +2,5 @@
 __pycache__
 *.pyc
 *.db
+purpose_pilot.egg-info
+.pytest_cache

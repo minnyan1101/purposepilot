@@ -1,5 +1,4 @@
 from datetime import datetime
-from venv import create
 from pydantic import BaseModel, validator
 
 class Purpose(BaseModel):

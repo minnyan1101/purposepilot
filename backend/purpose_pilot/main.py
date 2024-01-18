@@ -14,7 +14,7 @@ app = FastAPI()
 
 def connect_sqlite(path):
     conn = sqlite3.connect(path, check_same_thread=False)
-    conn.set_trace_callback(print)
+    # conn.set_trace_callback(print)
     return conn
 
 
@@ -187,7 +187,7 @@ def modify_purpose(id: int, purpose: Purpose, session: SessionState = Depends(ch
     return purpose
 
 
-@app.put("/api/purposes/{id}")
+@app.delete("/api/purposes/{id}")
 def delete_purpose(id: int, session: SessionState = Depends(check_current_active_user)):
     purpose_manager.delete_purpose(id, session.user_id)
 
@@ -207,7 +207,7 @@ def create_actions(action: Action, session: SessionState = Depends(check_current
     action.user_id = session.user_id
 
     try:
-        action = action_manager.new_action(action)
+        action = action_manager.new_action(action, session.user_id)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -239,3 +239,7 @@ def modify_actions(id: int, action: Action, session: SessionState = Depends(chec
 @app.delete("/api/actions/{id}", status_code=200)
 def delete_actions(id: int, session: SessionState = Depends(check_current_active_user)):
     action_manager.delete(id, session.user_id)
+
+@app.get("/api/reviews")
+def get_review_list(session: SessionState = Depends(check_current_active_user)):
+    pass    

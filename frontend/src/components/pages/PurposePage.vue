@@ -3,6 +3,12 @@ import { ref } from 'vue';
 import PurposeCreateButton from '@/components/PurposeCreateButton.vue';
 import PurposeCardList from '@/components/PurposeCardList.vue';
 
+import { useAuth } from '@/composables/useAuth'
+import { useFetchPurposeList } from '@/composables/useFetchPurposeList';
+import {usePullFetch} from '@/composables/usePullFetch'
+const currentUser = useAuth()
+const { data, err } = usePullFetch(30 * 1000, "/api/purposes")
+
 const fake_data = ref([
 {
     "purpose_id": 1,
@@ -38,6 +44,6 @@ const fake_data = ref([
 <template>
   <div class="px-8 py-4 max-w-4xl w-full flex flex-col gap-4">
     <PurposeCreateButton class="self-end"/>
-    <PurposeCardList :purpose_list="fake_data" />
+    <PurposeCardList :purpose_list="data" />
   </div>
 </template>

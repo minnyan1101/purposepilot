@@ -1,6 +1,4 @@
 <script setup>
-import { useAuth } from '@/composables/useAuth'
-const currentUser = useAuth()
 </script>
 
 <template>
@@ -10,7 +8,9 @@ const currentUser = useAuth()
     </header>
     <div class="h-full flex flex-1">
       <slot name="side" />
-      <slot name="main" />
+      <div class="grow size-full flex flex-col items-center">
+        <slot name="main" class=""/>
+      </div>
     </div>
   </div>
 </template>
