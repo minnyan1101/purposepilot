@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
-import HomePage from '@/components/pages/HomePage.vue'
 import ActionPage from '@/components/pages/ActionPage.vue'
 import PurposePage from '@/components/pages/PurposePage.vue'
 import PurposeCreatePage from '@/components/pages/PurposeCreatePage.vue'
@@ -13,13 +12,6 @@ import SideMenu from '@/components/SideMenu.vue'
 const routes = [
   { path: '/login', component: LoginPage },
   { path: '/register', component: RegisterPage },
-  {
-    path: '/',
-    components: {
-      default: HomePage,
-      side: SideMenu
-    }
-  },
   {
     path: '/actions',
     components: {

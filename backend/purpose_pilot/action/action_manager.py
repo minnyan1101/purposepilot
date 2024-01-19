@@ -11,10 +11,10 @@ class ActionManager:
     def new_action(self, action: Action, current_user) -> Action:
         if action.action_id is not None:
             raise ValueError("action_idが設定されています。")
-        
+
         if action.user_id != current_user:
             raise ValueError("user_idがとこなります")
-        
+
         return self.repo.save(action)
 
     # 登録されているデータを更新する
@@ -39,7 +39,7 @@ class ActionManager:
 
         if not _from:
             _from = datetime.max
-            
+
         return self.repo.findAll(user_id, purpose_ids, to, _from)
 
     def delete(self, action_id, current_user):

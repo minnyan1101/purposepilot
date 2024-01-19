@@ -6,7 +6,7 @@ class Review(BaseModel):
     review_id: int | None = None
     user_id: str
     purpose_id: int
-    reviewed_at: datetime
+    reviewed_at: datetime | None = None
     first_question_rating: float
     second_question_rating: float
     third_question_rating: float

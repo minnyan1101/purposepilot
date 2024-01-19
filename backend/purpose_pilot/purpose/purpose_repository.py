@@ -100,7 +100,8 @@ class PurposeRepository:
             )
             last_row = cur.execute(
                 """
-                SELECT purpose_id, user_id, title, description, created_at, due_at, is_completed, completed_at FROM Purpose
+                SELECT purpose_id, user_id, title, description, created_at, due_at, is_completed,
+                completed_at FROM Purpose
                     WHERE ROWID = ?
                 """,
                 (cur.lastrowid,)
@@ -122,7 +123,7 @@ def convert_result_to_purpose(result):
         due_at = None
     else:
         due_at = datetime.fromisoformat(result[5])
-    
+
     return Purpose(
         purpose_id=result[0],
         user_id=result[1],

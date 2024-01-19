@@ -7,13 +7,17 @@ export function useFetchPurposeList() {
 
   watch(json, () => {
     purpose_list.value = json.value.map((d) => {
+      let due_at = null
+      if (d.due_at) {
+        due_at = new Date(d.due_at)
+      }
       return {
         purpose_id: d.purpose_id,
         user_id: d.user_id,
         title: d.title,
         description: d.description,
         created_at: new Date(d.created_at),
-        due_at: new Date(d.due_at),
+        due_at: due_at,
         status: d.status,
         completed_at: new Date(d.completed_at)
       }

@@ -3,6 +3,7 @@ from typing import Union
 from fastapi import Response, FastAPI, Cookie, HTTPException, Depends, status
 
 from purpose_pilot.auth import AuthManager, AuthRepository, SessionRepository, SessionState, LoginUser
+from purpose_pilot.review import ReviewRepository, Review, ReviewManager
 from purpose_pilot.user import UserRepository, UserManager, User, RegisterUser
 from purpose_pilot.purpose import Purpose, PurposeRepository, PurposeManager, PurposeFilter
 from purpose_pilot.action import Action, ActionRepository, ActionManager
@@ -43,11 +44,18 @@ def make_action_manager(db_conn):
     return action_manager
 
 
+def make_review_manager(db_conn):
+    review_repository = ReviewRepository(db_conn)
+    review_manager = ReviewManager(review_repository)
+    return review_manager
+
+
 db_conn = connect_sqlite("purpose_pilot.db")
 auth_manager = make_auth_manager(db_conn)
 user_manager = make_user_manager(db_conn)
 purpose_manager = make_purpose_manager(db_conn)
 action_manager = make_action_manager(db_conn)
+review_manager = make_review_manager(db_conn)
 
 
 def check_current_active_user(ssid: Union[str, None] = Cookie(default=None)):
@@ -240,6 +248,20 @@ def modify_actions(id: int, action: Action, session: SessionState = Depends(chec
 def delete_actions(id: int, session: SessionState = Depends(check_current_active_user)):
     action_manager.delete(id, session.user_id)
 
+
+# 振り返りAPI
 @app.get("/api/reviews")
-def get_review_list(session: SessionState = Depends(check_current_active_user)):
-    pass    
+def get_review_list(to: datetime.datetime, _from: datetime.datetime,
+                    session: SessionState = Depends(check_current_active_user)):
+    pass
+
+
+@app.post("/api/reviews")
+def create_review(review: Review, session: SessionState = Depends(check_current_active_user)):
+    if review.user_id != session.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
+
+    review.reviewed_at = datetime.datetime.now(datetime.timezone.utc)
+    return review_manager.new_review(review, session.user_id)

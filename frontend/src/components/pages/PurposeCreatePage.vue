@@ -15,10 +15,10 @@ const due_at = ref('')
 
 function handleSubmit() {
   let _due_at = due_at.value
-  if (_due_at !== "") {
-    _due_at = (new Date(_due_at)).toISOString()
-  } else {
+  if (_due_at === "") {
     _due_at = null
+  } else {
+    _due_at = (new Date(due_at.value).toISOString())
   }
 
   console.log(_due_at)
@@ -31,6 +31,8 @@ function handleSubmit() {
     status: 'uncompleted',
     completed_at: undefined,
   }
+
+  console.log(purpose)
 
   fetch("/api/purposes", {
     method: "POST",
