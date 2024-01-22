@@ -24,6 +24,6 @@ function toogleStatus() {
     <StyledToggle :isToggled="true" @click="toogleStatus"></StyledToggle>
     <LabeledDateTimeInput label="期限" v-model="props.due_at" />
     <LabeledTextArea label="詳細" v-model="props.description" />
-    <StyledButton type="button" @click="emit('submitEvent')" text="更新"></StyledButton>
+    <StyledButton type="button" @click="emit('submitEvent')">更新</StyledButton>
   </form>
 </template>

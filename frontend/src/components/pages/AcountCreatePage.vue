@@ -13,7 +13,7 @@ import StyledButton from '@/components/StyledButton.vue';
       <form class="flex flex-col gap-4" action="" @submit="login">
         <LabeledTextInput label="ユーザーID" v-model="user_id" />
         <LabeledSecretInput label="パスワード" v-model="password" />
-        <StyledButton text="新規登録"></StyledButton>
+        <StyledButton>新規登録</StyledButton>
       </form>
     </div>
   </div>

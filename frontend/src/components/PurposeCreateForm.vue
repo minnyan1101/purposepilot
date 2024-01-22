@@ -15,6 +15,6 @@ const due_at = defineModel('due_at')
     <LabeledTextInput label="タイトル" v-model="title" class="text-3xl" />
     <LabeledDateTimeInput label="期限" v-model="due_at" />
     <LabeledTextArea label="詳細" v-model="description" />
-    <StyledButton type="button" @click="emit('submitEvent')" text="作成"></StyledButton>
+    <StyledButton type="button" @click="emit('submitEvent')">作成</StyledButton>
   </form>
 </template>

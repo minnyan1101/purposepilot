@@ -42,7 +42,7 @@ function login() {
       <form class="flex flex-col gap-4" action="" @submit="login">
         <LabeledTextInput label="ユーザーID" v-model="user_id" />
         <LabeledSecretInput label="パスワード" v-model="password" />
-        <StyledButton text="ログイン"></StyledButton>
+        <StyledButton>ログイン</StyledButton>
       </form>
       <RouterLink class="self-start" to="/register">
         <p class="block self-start text-xs text-blue-600 hover:text-blue-800">+ 新規登録</p>

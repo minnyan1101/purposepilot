@@ -3,17 +3,19 @@ import { useAuth } from '@/composables/useAuth'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useFetchPurposeList } from '@/composables/useFetchPurposeList';
 import { computed, onMounted, ref } from 'vue';
+import StyledButton from '../StyledButton.vue';
+import LabeledTextArea from '../LabeledTextArea.vue';
 const currentUser = useAuth()
 const { purpose_list, err } = useFetchPurposeList()
 
 const purpose_accordion_data = computed(() => {
   return purpose_list.value.map((purpose) => {
-    return {id: purpose.purpose_id, title: purpose.title}
+    return { id: purpose.purpose_id, title: purpose.title }
   })
 })
 
 const action_detail = ref("")
-const select_id = ref()
+const select_id = ref(0)
 const recode_state = ref("begin")
 const started_at = ref()
 const finished_at = ref()
@@ -31,8 +33,20 @@ const display_elasped = computed(() => {
   return `${hour.toString().padStart(2, "0")}h ${minute.toString().padStart(2, "0")}m ${sec.toString().padStart(2, "0")}s`
 })
 
+const canRecode = computed(() => {
+  return recode_state.value === "begin"
+})
+
+const canFinish = computed(() => {
+  return recode_state.value === "start"
+})
+
+const canSubmit = computed(() => {
+  return recode_state.value === "end"
+})
+
 onMounted(() => {
-  const step = (t) => {
+  const step = () => {
     if (recode_state.value === "begin") {
       started_at.value = new Date()
       finished_at.value = new Date()
@@ -52,7 +66,7 @@ function handleStart() {
   recode_state.value = "start"
 }
 
-function handleFinish(){
+function handleFinish() {
   if (recode_state.value !== "start") {
     return
   }
@@ -89,28 +103,31 @@ function handleSubmit() {
 </script>
 
 <template>
-  <div class="m-auto grid grid-cols-2 grid-rows-3">
-    <div class="col-span-1 row-start-1 row-end-4">
+  <div class="m-auto grid grid-cols-2 grid-rows-[auto_1fr_auto] gap-6 bg-neutral-50 rounded-md border-2 border-neutral-300 p-8">
+    <div class="col-span-1 row-start-1 row-end-4 flex flex-col justify-around">
       <div class="">
-        <h1 class="text-5xl">{{ display_elasped }}</h1>
+        <h1 class="text-5xl font-mono">{{ display_elasped }}</h1>
       </div>
-      <button @click="handleStart">
-        <FontAwesomeIcon icon="fa-solid fa-circle-play"></FontAwesomeIcon>
-      </button>
-      <button @click="handleFinish">
-        <FontAwesomeIcon icon="fa-solid fa-circle-stop"></FontAwesomeIcon>
-      </button>
+      <div class="flex justify-around">
+        <button @click="handleStart" :disabled="!canRecode">
+          <FontAwesomeIcon icon="fa-solid fa-circle-play" class="text-4xl text-pink-500" :class="{'text-neutral-300': !canRecode}"></FontAwesomeIcon>
+        </button>
+        <button @click="handleFinish" :disabled="!canFinish">
+          <FontAwesomeIcon icon="fa-solid fa-circle-stop" class="text-4xl text-pink-500" :class="{'text-neutral-300': !canFinish}"></FontAwesomeIcon>
+        </button>
+      </div>
     </div>
-    <div class="col-start-2 col-end-3 row-start-1 row-end-4">
+    <div class="col-start-2 col-end-3 row-start-1 row-end-2">
       <select name="purposes" required=true @change="changeSelect">
-        <option v-for="data in purpose_accordion_data" :value="data.id" :key="data.id">{{ data.title }}</option>
+        <option disabled value="select purpose title">---Select purpose title---</option>
+        <option v-for="data in purpose_accordion_data" :value="data.id" :key="data.id" :selected="data.id === select_id">{{ data.title }}</option>
       </select>
     </div>
     <div class="col-start-2 col-end-3 row-start-2 row-end-3">
-      <textarea v-model="action_detail"></textarea>
+      <LabeledTextArea v-model="action_detail"></LabeledTextArea>
     </div>
     <div class="col-start-2 col-end-3 row-start-3 row-end-4">
-      <button @click="handleSubmit">送信</button>
+      <StyledButton @click="handleSubmit" :disabled="!canSubmit">送信</StyledButton>
     </div>
   </div>
 </template>

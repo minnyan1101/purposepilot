@@ -29,7 +29,7 @@ function handleSubmit() {
       <LabeledSecretInput v-model="data.password_confirm" label="再確認" />
       <div class="flex justify-between items-center">
         <RouterLink to="/login"><p class="text-blue-500 text-xs hover:text-blue-800">ログイン</p></RouterLink>
-        <StyledButton class="self-end" text="登録"></StyledButton>
+        <StyledButton class="self-end">登録</StyledButton>
       </div>
     </form>
   </div>
