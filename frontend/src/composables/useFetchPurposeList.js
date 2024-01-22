@@ -3,7 +3,7 @@ import { usePullFetch } from "./usePullFetch";
 
 export function useFetchPurposeList() {
   const { json, err } = usePullFetch(30 * 1000, "/api/purposes", {method: "GET"})
-  const purpose_list = ref(null)
+  const purpose_list = ref([])
 
   watch(json, () => {
     purpose_list.value = json.value.map((d) => {
