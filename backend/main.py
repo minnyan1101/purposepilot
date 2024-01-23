@@ -19,43 +19,26 @@ def connect_sqlite(path):
     return conn
 
 
-def make_auth_manager(db_conn):
-    session_repository = SessionRepository(db_conn)
-    auth_repository = AuthRepository(db_conn)
-    auth_manager = AuthManager(session_repository, auth_repository)
-    return auth_manager
-
-
-def make_user_manager(db_conn):
-    user_repository = UserRepository(db_conn)
-    user_manager = UserManager(user_repository)
-    return user_manager
-
-
-def make_purpose_manager(db_conn):
-    purpose_repository = PurposeRepository(db_conn)
-    purpose_manager = PurposeManager(purpose_repository)
-    return purpose_manager
-
-
-def make_action_manager(db_conn):
-    action_repository = ActionRepository(db_conn)
-    action_manager = ActionManager(action_repository)
-    return action_manager
-
-
-def make_review_manager(db_conn):
-    review_repository = ReviewRepository(db_conn)
-    review_manager = ReviewManager(review_repository)
-    return review_manager
-
-
 db_conn = connect_sqlite("purpose_pilot.db")
-auth_manager = make_auth_manager(db_conn)
-user_manager = make_user_manager(db_conn)
-purpose_manager = make_purpose_manager(db_conn)
-action_manager = make_action_manager(db_conn)
-review_manager = make_review_manager(db_conn)
+
+session_repository = SessionRepository(db_conn)
+auth_repository = AuthRepository(db_conn)
+auth_manager = AuthManager(session_repository, auth_repository)
+
+user_repository = UserRepository(db_conn)
+user_manager = UserManager(user_repository)
+
+
+purpose_repository = PurposeRepository(db_conn)
+purpose_manager = PurposeManager(purpose_repository)
+
+
+action_repository = ActionRepository(db_conn)
+action_manager = ActionManager(action_repository)
+
+
+review_repository = ReviewRepository(db_conn)
+review_manager = ReviewManager(review_repository, purpose_repository)
 
 
 def check_current_active_user(ssid: Union[str, None] = Cookie(default=None)):
@@ -250,13 +233,13 @@ def delete_actions(id: int, session: SessionState = Depends(check_current_active
 
 
 # 振り返りAPI
-@app.get("/api/reviews")
-def get_review_list(to: datetime.datetime, _from: datetime.datetime,
-                    session: SessionState = Depends(check_current_active_user)):
-    pass
+@app.get("/api/reviews/need_weekly_reviews")
+def get_need_weekly_reviews(session: SessionState = Depends(check_current_active_user)):
+    need_weekly_reviews = review_manager.get_need_weekly_reviews(current_user=session.user_id)
+    return need_weekly_reviews
 
 
-@app.post("/api/reviews")
+@app.post("/api/reviews", status_code=status.HTTP_201_CREATED)
 def create_review(review: Review, session: SessionState = Depends(check_current_active_user)):
     if review.user_id != session.user_id:
         raise HTTPException(
@@ -265,3 +248,9 @@ def create_review(review: Review, session: SessionState = Depends(check_current_
 
     review.reviewed_at = datetime.datetime.now(datetime.timezone.utc)
     return review_manager.new_review(review, session.user_id)
+
+
+@app.get("/api/reviews/{id}")
+def get_review(id, session: SessionState = Depends(check_current_active_user)):
+    pass
+

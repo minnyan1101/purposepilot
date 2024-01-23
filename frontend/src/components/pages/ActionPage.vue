@@ -2,11 +2,15 @@
 import { useAuth } from '@/composables/useAuth'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useFetchPurposeList } from '@/composables/useFetchPurposeList';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import StyledButton from '../StyledButton.vue';
 import LabeledTextArea from '../LabeledTextArea.vue';
+import { useRoute, useRouter } from 'vue-router';
+
 const currentUser = useAuth()
 const { purpose_list, err } = useFetchPurposeList()
+const route = useRoute()
+const router = useRouter()
 
 const purpose_accordion_data = computed(() => {
   return purpose_list.value.map((purpose) => {
@@ -19,6 +23,7 @@ const select_id = ref(0)
 const recode_state = ref("begin")
 const started_at = ref()
 const finished_at = ref()
+
 
 const elapsed_ms = computed(() => {
   return finished_at.value - started_at.value
@@ -57,6 +62,10 @@ onMounted(() => {
     }
   }
   setInterval(step, 100)
+
+  if ("purpose_id" in route.query) {
+    select_id.value = parseInt(route.query.purpose_id)
+  }
 })
 
 function handleStart() {
@@ -74,7 +83,7 @@ function handleFinish() {
 }
 
 function changeSelect(e) {
-  select_id.value = e.target.value
+  select_id.value = parseInt(e.target.value)
 }
 
 function handleSubmit() {
@@ -96,8 +105,11 @@ function handleSubmit() {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(send_data),
-  }).then(() => {
-
+  }).then((res) => {
+    if (!res.ok) {
+      throw new Error("Error")
+    }
+    router.push("/purposes")
   }).catch()
 }
 </script>
@@ -110,10 +122,10 @@ function handleSubmit() {
       </div>
       <div class="flex justify-around">
         <button @click="handleStart" :disabled="!canRecode">
-          <FontAwesomeIcon icon="fa-solid fa-circle-play" class="text-4xl text-pink-500" :class="{'text-neutral-300': !canRecode}"></FontAwesomeIcon>
+          <FontAwesomeIcon icon="fa-solid fa-circle-play" class="text-4xl" :class="{'text-pink-500': canRecode,'text-neutral-300': !canRecode}"></FontAwesomeIcon>
         </button>
         <button @click="handleFinish" :disabled="!canFinish">
-          <FontAwesomeIcon icon="fa-solid fa-circle-stop" class="text-4xl text-pink-500" :class="{'text-neutral-300': !canFinish}"></FontAwesomeIcon>
+          <FontAwesomeIcon icon="fa-solid fa-circle-stop" class="text-4xl" :class="{'text-pink-500': canFinish,'text-neutral-300': !canFinish}"></FontAwesomeIcon>
         </button>
       </div>
     </div>

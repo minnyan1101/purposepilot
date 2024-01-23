@@ -4,6 +4,7 @@ import PurposePageBackButton from '@/components/PurposePageBackButton.vue';
 import PurposeEditForm from '@/components/PurposeEditForm.vue';
 import { useRoute } from 'vue-router';
 import { computed, ref } from 'vue';
+import { router } from '@/router';
 const currentUser = useAuth()
 const route = useRoute()
 
@@ -18,11 +19,22 @@ fetch(`/api/purposes/${purpose_id.value}`)
   return res.json()
 }).then(json => {
   purpose.value = json
+  console.log(purpose.value)
 }).catch(err => {
 })
 
 function update() {
-  console.log(purpose.value)
+  fetch(`/api/purposes/${purpose_id.value}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(purpose.value)
+  }).then((res) => {
+    if (!res.ok) {
+    }
+    router.push("/purposes")
+  })
 }
 </script>
 <template>

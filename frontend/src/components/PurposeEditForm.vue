@@ -8,22 +8,36 @@ import { computed, watch, ref } from 'vue';
 
 const emit = defineEmits('submitEvent')
 
-const props = defineProps(['title', 'description', 'due_at', 'status', 'completed_at'])
+const title = defineModel("title")
+const description = defineModel("description")
+const due_at = defineModel("due_at")
+const status = defineModel("status")
+const completed_at = defineModel("completed_at")
 
-const isToggled = ref(false)
+const isToggled = computed(() => {
+  return status.value === "completed"
+})
 
 
 function toogleStatus() {
-  console.log(isToggled)
-  
+  if (status.value === "completed") {
+    status.value = "uncompleted"
+    completed_at.value = null
+  } else {
+    status.value = "completed"
+    completed_at.value = (new Date()).toISOString()
+  }
+
+  console.log(status, completed_at)
 }
 </script>
 <template>
   <form  class="flex flex-col gap-4" action="">
-    <LabeledTextInput label="タイトル" v-model="props.title" class="text-3xl" />
-    <StyledToggle :isToggled="true" @click="toogleStatus"></StyledToggle>
-    <LabeledDateTimeInput label="期限" v-model="props.due_at" />
-    <LabeledTextArea label="詳細" v-model="props.description" />
+    <LabeledTextInput label="タイトル" v-model="title" class="text-3xl" />
+    <p class="text-sm">達成済</p>
+    <StyledToggle :isToggled="isToggled" @click="toogleStatus"></StyledToggle>
+    <LabeledDateTimeInput label="期限" v-model="due_at" />
+    <LabeledTextArea label="詳細" v-model="description" />
     <StyledButton type="button" @click="emit('submitEvent')">更新</StyledButton>
   </form>
 </template>

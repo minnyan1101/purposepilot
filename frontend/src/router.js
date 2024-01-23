@@ -7,11 +7,14 @@ import PurposeEditPage from '@/components/pages/PurposeEditPage.vue'
 import LoginPage from '@/components/pages/LoginPage.vue'
 import RegisterPage from '@/components/pages/RegisterPage.vue'
 import SideMenu from '@/components/SideMenu.vue'
+import ReviewPage from './components/pages/ReviewPage.vue'
+import ReviewCreatePage from './components/pages/ReviewCreatePage.vue'
 
 
 const routes = [
   { path: '/login', component: LoginPage },
   { path: '/register', component: RegisterPage },
+  { path: '/', redirect: '/purposes'},
   {
     path: '/actions',
     components: {
@@ -37,6 +40,20 @@ const routes = [
     path: '/purposes/:id/edit',
     components: {
       default: PurposeEditPage,
+      side: SideMenu
+    }
+  },
+  {
+    path: '/reviews',
+    components: {
+      default: ReviewPage,
+      side: SideMenu
+    }
+  },
+  {
+    path: '/reviews/new/:id',
+    components: {
+      default: ReviewCreatePage,
       side: SideMenu
     }
   },

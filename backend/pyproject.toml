@@ -12,7 +12,7 @@ dependencies = [
     "fastapi",
     "pydantic",
     "uvicorn[standard]",
-]a
+]
 
 [project.optional-dependencies]
 dev = [
