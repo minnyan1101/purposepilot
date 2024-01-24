@@ -5,6 +5,7 @@ import StyledButton from '@/components/StyledButton.vue';
 import StyledToggle from '@/components/StyledToggle.vue';
 import LabeledDateTimeInput from './LabeledDateTimeInput.vue';
 import { computed, watch, ref } from 'vue';
+import PurposeCompleteSwitch from './PurposeCompleteSwitch.vue';
 
 const emit = defineEmits('submitEvent')
 
@@ -14,7 +15,7 @@ const due_at = defineModel("due_at")
 const status = defineModel("status")
 const completed_at = defineModel("completed_at")
 
-const isToggled = computed(() => {
+const isCompleted = computed(() => {
   return status.value === "completed"
 })
 
@@ -34,8 +35,7 @@ function toogleStatus() {
 <template>
   <form  class="flex flex-col gap-4" action="">
     <LabeledTextInput label="タイトル" v-model="title" class="text-3xl" />
-    <p class="text-sm">達成済</p>
-    <StyledToggle :isToggled="isToggled" @click="toogleStatus"></StyledToggle>
+    <PurposeCompleteSwitch :isCompleted="isCompleted" @onSwitch="toogleStatus" class="self-start"/>
     <LabeledDateTimeInput label="期限" v-model="due_at" />
     <LabeledTextArea label="詳細" v-model="description" />
     <StyledButton type="button" @click="emit('submitEvent')">更新</StyledButton>

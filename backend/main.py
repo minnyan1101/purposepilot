@@ -186,8 +186,14 @@ def delete_purpose(id: int, session: SessionState = Depends(check_current_active
 # 行動
 # 行動の一覧の取得
 @app.get("/api/actions", status_code=200)
-def fetch_actions_list(session: SessionState = Depends(check_current_active_user)):
-    actions = action_manager.get_actions_list(session.user_id, None, None, None)
+def fetch_actions_list(to: str | None = None, _from: str | None = None, purpose_ids: int = None, session: SessionState = Depends(check_current_active_user)):
+    to = datetime.datetime.fromisoformat(to)
+    _from = datetime.datetime.fromisoformat(_from)
+    
+    if isinstance(purpose_ids, int):
+        purpose_ids = [purpose_ids]
+    
+    actions = action_manager.get_actions_list(session.user_id, purpose_ids, to, _from)
     return actions
 
 
@@ -252,5 +258,11 @@ def create_review(review: Review, session: SessionState = Depends(check_current_
 
 @app.get("/api/reviews/{id}")
 def get_review(id, session: SessionState = Depends(check_current_active_user)):
-    pass
+    r = review_manager.get_review(id, session.user_id)
+    if r is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND
+        )
+    
+    return r
 

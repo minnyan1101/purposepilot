@@ -81,21 +81,8 @@ class ReviewRepository:
         cur = self.conn.cursor()
         response = cur.execute(
             """
-            INSERT INTO Review (
-                user_id,
-                purpose_id,
-                reviewed_at,
-                first_question_rating,
-                second_question_rating,
-                third_question_rating
-            ) VALUESE (
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-                ?,
-            )
+            INSERT INTO Review (user_id, purpose_id, reviewed_at, first_question_rating, second_question_rating, third_question_rating)
+            VALUES (?, ?, ?, ?, ?, ?);
             """,
             (
                 review.user_id,
@@ -108,10 +95,11 @@ class ReviewRepository:
         )
 
         row_id = response.lastrowid
+        print(row_id)
 
         new_item_response = cur.execute(
             """
-            SELECT (
+            SELECT
                 review_id,
                 user_id,
                 purpose_id,
@@ -119,9 +107,9 @@ class ReviewRepository:
                 first_question_rating,
                 second_question_rating,
                 third_question_rating
-            ) FROM Review
+             FROM Review
                 WHERE (
-                    ROWID = ?
+                    rowid = ?
                 )
             """,
             (row_id,),
@@ -139,6 +127,37 @@ class ReviewRepository:
         )
 
         return new_review
+
+    def update(self, review: Review) -> Review:
+        cur = self.conn.cursor()
+
+        cur.execute(
+            """
+            UPDATE Review 
+                SET 
+                    user_id=?,
+                    purpose_id=?,
+                    reviewed_at=?,
+                    first_question_rating=?,
+                    second_question_rating=?,
+                    third_question_rating=?
+                WHERE
+                    review_id=?
+            """,
+            (
+                review.user_id,
+                review.purpose_id,
+                review.format_reviewed_at(),
+                review.first_question_rating,
+                review.second_question_rating,
+                review.third_question_rating,
+                review.review_id,
+            ),
+        )
+        self.conn.commit()
+        res = self.find(review.review_id)
+        cur.close()
+        return res
 
     def save(self, review: Review) -> Review:
         if review.review_id is None:

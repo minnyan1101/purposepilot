@@ -13,7 +13,9 @@ const route = useRoute()
 const router = useRouter()
 
 const purpose_accordion_data = computed(() => {
-  return purpose_list.value.map((purpose) => {
+  return purpose_list.value
+  .filter((purpose) => purpose.status === "uncompleted")
+  .map((purpose) => {
     return { id: purpose.purpose_id, title: purpose.title }
   })
 })

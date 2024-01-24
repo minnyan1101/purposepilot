@@ -11,8 +11,19 @@ class ReviewManager:
     ) -> None:
         self.review_repo = review_repo
         self.purpose_repo = purpose_repo
+        
+    def get_review(self, review_id, current_user) -> Review | None:
+        review = self.review_repo.find(review_id)
+        if review is None:
+            return None
+
+        if review.user_id != current_user:
+            return None
+
+        return review
 
     def new_review(self, review: Review, current_user) -> Review:
+        assert review.user_id == current_user
         return self.review_repo.save(review)
 
     def get_need_weekly_reviews(self, current_user) -> list[int]:
