@@ -1,0 +1,1 @@
+.\python\python.exe -m purpose_pilot.main

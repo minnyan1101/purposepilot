@@ -77,9 +77,9 @@ fetchActionData()
     </div>
     <ReviewCard :purpose_id="targetPurposeId"></ReviewCard>
     <ReviewActionCardList :actions="actionData"></ReviewActionCardList>
-    <ReviewQuestionSlider v-model="questions.q1" label="Q1" />
-    <ReviewQuestionSlider v-model="questions.q2" label="Q2" />
-    <ReviewQuestionSlider v-model="questions.q3" label="Q3" />
+    <ReviewQuestionSlider v-model="questions.q1" label="総行動時間に満足していますか？" />
+    <ReviewQuestionSlider v-model="questions.q2" label="行動内容は目標達成に十分ですか？" />
+    <ReviewQuestionSlider v-model="questions.q3" label="目標は達成可能ですか？" />
     <StyledButton @click="handleSubmit">ふりかえり</StyledButton>
   </div>
 </template>

@@ -1,4 +1,0 @@
--r ./requestments.txt
-flake8
-pytest
-httpx

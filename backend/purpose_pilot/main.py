@@ -1,6 +1,9 @@
+import os
 from typing import Union
 
 from fastapi import Response, FastAPI, Cookie, HTTPException, Depends, status
+from fastapi.staticfiles import StaticFiles
+import uvicorn
 
 from purpose_pilot.auth import AuthManager, AuthRepository, SessionRepository, SessionState, LoginUser
 from purpose_pilot.review import ReviewRepository, Review, ReviewManager
@@ -12,14 +15,93 @@ import datetime
 
 app = FastAPI()
 
+def create_table(path):
+    conn = sqlite3.connect(path)
+    cur = conn.cursor()
 
-def connect_sqlite(path):
-    conn = sqlite3.connect(path, check_same_thread=False)
-    # conn.set_trace_callback(print)
+    cur.execute(
+        """
+            CREATE TABLE User (
+            user_id TEXT NOT NULL, --ユーザーID
+            hash TEXT NOT NULL, --ハッシュ済みパスワード
+            created_at DATETIME NOT NULL, --作成日時
+            updated_at DATETIME NOT NULL, --更新日時
+            avater_image_url TEXT NOT NULL DEFAULT 0, --アバター画像URL
+            PRIMARY KEY (user_id)
+            )"""
+    )
+    conn.commit()
+
+    cur.execute(
+        """
+            CREATE TABLE Purpose (
+            purpose_id INTEGER PRIMARY KEY AUTOINCREMENT, --目標ID
+            user_id TEXT NOT NULL, --ユーザーID
+            title TEXT NOT NULL, --目標タイトル
+            description TEXT NOT NULL, --目標内容
+            created_at DATETIME NOT NULL, --作成日時
+            due_at DATETIME, --期限
+            is_completed BOOL NOT NULL, --完了フラグ
+            completed_at DATETIME, --完了日時
+            FOREIGN KEY (user_id) references User(user_id)
+            )"""
+    )
+    conn.commit()
+
+    cur.execute(
+        """
+            CREATE TABLE Action (
+            action_id INTEGER PRIMARY KEY AUTOINCREMENT, --行動ID
+            user_id TEXT NOT NULL, --ユーザーID
+            purpose_id INT NOT NULL, --目標ID
+            action_detail TEXT NOT NULL, --行動内容8
+            started_at DATETIME NOT NULL, --開始日時
+            finished_at DATETIME, --終了日時
+            FOREIGN KEY (user_id) references Users(user_id),
+            FOREIGN KEY (purpose_id) references Purpose(purpose_id)
+            )"""
+    )
+    conn.commit()
+
+    cur.execute(
+        """
+            CREATE TABLE Review (
+            review_id INTEGER PRIMARY KEY AUTOINCREMENT, --振り返りID
+            user_id TEXT, --ユーザーID
+            purpose_id INT, --目標ID
+            reviewed_at DATETIME NOT NULL, --振り返り日時
+            first_question_rating REAL NOT NULL, --1問目の評価値
+            second_question_rating REAL NOT NULL, --2問目の評価値
+            third_question_rating REAL NOT NULL, --3問目の評価値
+            FOREIGN KEY (user_id) references Users(user_id),
+            FOREIGN KEY (purpose_id) references Purpose(purpose_id)
+            )"""
+    )
+    conn.commit()
+
+    cur.execute(
+        """
+            CREATE TABLE Session (
+            session_id TEXT, --セッションID
+            user_id TEXT NOT NULL, --ユーザーID
+            issued_at DATETIME NOT NULL, --発行日時
+            expired_at DATETIME NOT NULL, --有効期限
+            PRIMARY KEY (session_id)
+            FOREIGN KEY (user_id) references Users(user_id)
+            )"""
+    )
+    conn.commit()
+
+
+def init_sqlite(path):
+    if not os.path.exists(path):
+        create_table(path)
+
+    conn = sqlite3.connect(path, check_same_thread=False, autocommit=False)
     return conn
 
 
-db_conn = connect_sqlite("purpose_pilot.db")
+db_conn = init_sqlite("purpose_pilot.db")
 
 session_repository = SessionRepository(db_conn)
 auth_repository = AuthRepository(db_conn)
@@ -266,3 +348,13 @@ def get_review(id, session: SessionState = Depends(check_current_active_user)):
     
     return r
 
+
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+
+def main():
+    uvicorn.run(app)
+
+
+if __name__ == "__main__":
+    main()

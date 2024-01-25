@@ -5,10 +5,18 @@ import LabeledTextInput from '@/components/LabeledTextInput.vue'
 import LabeledSecretInput from '@/components/LabeledSecretInput.vue'
 import StyledButton from '@/components/StyledButton.vue';
 
+import { useValidate } from '@/composables/useValidate';
+import { userIdValidate, passwordValidate } from '@/validators';
+import AlertMessage from '../AlertMessage.vue';
+
 const router = useRouter()
 
 const user_id = ref("")
 const password = ref("")
+
+
+const [userIdOk, userIdMsg] = useValidate(userIdValidate, user_id)
+const [passwordOk, passwordMsg] = useValidate(passwordValidate, password)
 
 function login() {
   fetch(
@@ -36,7 +44,7 @@ function login() {
 </script>
 
 <template>
-  <div class="flex size-full justify-center items-center">
+  <div class="m-auto relative">
     <div class="border-2 border-neutral-300 bg-neutral-50 px-6 py-6 rounded-lg flex flex-col gap-4">
       <h1 class="text-2xl font-bold text-neutral-800">ログイン</h1>
       <form class="flex flex-col gap-4" action="" @submit="login">
@@ -47,6 +55,10 @@ function login() {
       <RouterLink class="self-start" to="/register">
         <p class="block self-start text-xs text-blue-600 hover:text-blue-800">+ 新規登録</p>
       </RouterLink>
+    </div>
+    <div class="flex flex-col w-80 absolute left-full top-0">
+      <AlertMessage v-if="!userIdOk" :message="userIdMsg" />
+      <AlertMessage v-if="!passwordOk" :message="passwordMsg" />
     </div>
   </div>
 </template>

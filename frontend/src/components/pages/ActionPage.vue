@@ -21,7 +21,7 @@ const purpose_accordion_data = computed(() => {
 })
 
 const action_detail = ref("")
-const select_id = ref(0)
+const select_id = ref(route.query["purpose_id"])
 const recode_state = ref("begin")
 const started_at = ref()
 const finished_at = ref()
@@ -133,7 +133,7 @@ function handleSubmit() {
     </div>
     <div class="col-start-2 col-end-3 row-start-1 row-end-2">
       <select name="purposes" required=true @change="changeSelect">
-        <option disabled value="select purpose title">---Select purpose title---</option>
+        <option disabled value="select purpose title" selected>---Select purpose title---</option>
         <option v-for="data in purpose_accordion_data" :value="data.id" :key="data.id" :selected="data.id === select_id">{{ data.title }}</option>
       </select>
     </div>

@@ -4,3 +4,6 @@ __pycache__
 *.db
 purpose_pilot.egg-info
 .pytest_cache
+dist
+build
+*.zip

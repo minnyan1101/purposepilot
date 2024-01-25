@@ -1,10 +1,10 @@
 import json
-from main import app, login
+from purpose_pilot.main import app, login
 from scripts.init_test_db import main
 from fastapi.testclient import TestClient
 from httpx import Cookies
 
-main()
+# main()
 
 client = TestClient(app)
 login_cookie = Cookies()
