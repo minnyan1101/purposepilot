@@ -21,6 +21,8 @@ def build_backend():
 
 
 def make_archive():
+    if os.path.exists("purpose_pilot.zip"):
+        os.remove("purpose_pilot.zip")
     shutil.make_archive("purpose_pilot", format="zip", root_dir="build")
 
 

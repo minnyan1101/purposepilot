@@ -47,7 +47,7 @@ function login() {
   <div class="m-auto relative">
     <div class="border-2 border-neutral-300 bg-neutral-50 px-6 py-6 rounded-lg flex flex-col gap-4">
       <h1 class="text-2xl font-bold text-neutral-800">ログイン</h1>
-      <form class="flex flex-col gap-4" action="" @submit="login">
+      <form class="flex flex-col gap-4" @submit.prevent="login">
         <LabeledTextInput label="ユーザーID" v-model="user_id" />
         <LabeledSecretInput label="パスワード" v-model="password" />
         <StyledButton>ログイン</StyledButton>

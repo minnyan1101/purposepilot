@@ -33,7 +33,7 @@ function toogleStatus() {
 }
 </script>
 <template>
-  <form  class="flex flex-col gap-4" action="">
+  <form  class="flex flex-col gap-4">
     <LabeledTextInput label="タイトル" v-model="title" class="text-3xl" />
     <PurposeCompleteSwitch :isCompleted="isCompleted" @onSwitch="toogleStatus" class="self-start"/>
     <LabeledDateTimeInput label="期限" v-model="due_at" />

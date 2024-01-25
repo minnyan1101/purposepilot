@@ -11,7 +11,7 @@ const description = defineModel('description')
 const due_at = defineModel('due_at')
 </script>
 <template>
-  <form  class="flex flex-col gap-4" action="">
+  <form  class="flex flex-col gap-4" >
     <LabeledTextInput label="タイトル" v-model="title" class="text-3xl" />
     <LabeledDateTimeInput label="期限" v-model="due_at" />
     <LabeledTextArea label="詳細" v-model="description" />

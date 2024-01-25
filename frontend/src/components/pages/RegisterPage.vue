@@ -24,6 +24,7 @@ function handleRegisterData() {
     password: password.value,
     password_confirm: password_confirm.value
   }
+
   fetch(
     "/api/users",
     {
@@ -35,21 +36,27 @@ function handleRegisterData() {
     }
   ).then(res => {
     if (!res.ok) {
+      if (res.status === 409) {
+        throw new Error("そのユーザーは既に存在します。")
+      }
       throw new Error("送信時にエラーが発生しました。")
     }
     router.push("/login")
   }).catch(e => {
     submitError.value = e.toString()
+    setTimeout(() => {
+      submitError.value = ""
+    }, 3000);
   })
 }
 </script>
 
 <template>
-  <div class="flex gap-2 size-full justify-center items-center">
+  <div class="m-auto relative">
 
     <RegisterForm @submitEvent="handleRegisterData" v-model:user_id="user_id" v-model:password="password"
       v-model:password_confirm="password_confirm" />
-    <div class="flex flex-col w-80">
+    <div class="absolute left-full top-0 flex flex-col w-80">
       <AlertMessage v-if="!userIdOk" :message="userIdMsg" />
       <AlertMessage v-if="!passwordOk" :message="passwordMsg" />
       <AlertMessage v-if="submitError !== ''" :message="submitError" />

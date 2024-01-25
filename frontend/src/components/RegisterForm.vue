@@ -16,7 +16,7 @@ function handleSubmit() {
 <template>
   <div class="border-2 border-neutral-300 rounded-lg bg-neutral-50 px-6 py-6">
     <h1 class="text-2xl font-bold mb-4">ユーザー登録</h1>
-    <form class="flex flex-col gap-4" action="" @submit="handleSubmit">
+    <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
       <LabeledTextInput v-model="user_id" label="ユーザーID" />
       <LabeledSecretInput v-model="password" label="パスワード" />
       <LabeledSecretInput v-model="password_confirm" label="再確認" />
